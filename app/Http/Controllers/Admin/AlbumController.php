@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Album;
+use Random\RandomException;
 
 class AlbumController extends Controller
 {
@@ -23,14 +24,19 @@ class AlbumController extends Controller
         return view('admin.albums.create');
     }
 
+    /**
+     * @throws RandomException
+     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
+        $hash = bin2hex(random_bytes(16)); // 16 bajtów, co daje 32-znakowy hash
 
         Album::query()->create([
             'name' => $request->name,
+            'hash' => $hash,
         ]);
 
         return redirect()->route('albums.index')->with('success', 'Album utworzony!');

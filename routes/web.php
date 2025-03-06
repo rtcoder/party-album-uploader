@@ -1,14 +1,19 @@
 <?php
 
 use App\Http\Controllers\Admin\AlbumController;
+use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/upload/{hash}', [MediaController::class, 'upload_form'])->name('media.upload_form');
+Route::post('/upload/{hash}', [MediaController::class, 'upload']);
 
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::resource('albums', AlbumController::class);
-});
+Route::get('/admin', fn() => redirect('/admin/albums'))->name('admin');
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth'])
+    ->prefix('admin')
+    ->group(function () {
+        Route::resource('albums', AlbumController::class);
+        Route::get('*', fn() => redirect('/admin/albums'));
+    });
+
+require __DIR__ . '/auth.php';
