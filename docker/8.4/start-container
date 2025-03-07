@@ -12,7 +12,8 @@ fi
 if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
-
+chmod -R 777 storage vendor bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
 chmod -R ugo+rw /.composer
 npm install
 npm run build
